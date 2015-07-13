@@ -7,7 +7,8 @@ var temporaryArray = [];
 var outputArray = [];
 var i = 0;
 var schoolArray = JSON.parse(JSON.stringify(schools));
-// console.log(JSON.stringify(schoolArray));
+var path = 'school_html_block.json';
+
 for(var prop in schoolArray){
   var school = JSON.parse(JSON.stringify(schoolArray[prop]));
   console.log(school.url);
@@ -20,10 +21,10 @@ function logPage(schoolName, schoolUrl) {
   similarSchoolBlock = '';
   page.open(schoolUrl, function(status){
     console.log(status);
-    console.log("test");
+    console.log(schoolName);
     if (status == 'success') {
       similarSchoolBlock = page.evaluate(function(){
-        return document.querySelector('.similar-schools').innerHTML;
+        return document.querySelector('.similar-schoos').innerHTML;
       });
     };
 
@@ -36,9 +37,14 @@ function logPage(schoolName, schoolUrl) {
     setTimeout(function(){
       i++;
       if (i < temporaryArray.length) {
+        if (i % 20 === 0) {
+          fs.write( path, JSON.stringify(outputArray, undefined, 2), function (err) {
+            if (err) throw err;
+            console.log('It\'s saved!');
+          });
+        };
         nextPage(i);
       } else {
-      var path = 'school_html_block.json';
       fs.write( path, JSON.stringify(outputArray, undefined, 2), function (err) {
         if (err) throw err;
         console.log('It\'s saved!');
@@ -48,8 +54,6 @@ function logPage(schoolName, schoolUrl) {
     }, 10000)
 
   }); 
-
-
 };
 
 function nextPage(i) {
@@ -57,7 +61,5 @@ function nextPage(i) {
   var schoolUrl = temporaryArray[i][1];
   logPage(schoolName, schoolUrl);
 };
-
-
 
 nextPage(i);
