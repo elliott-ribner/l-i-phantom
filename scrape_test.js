@@ -1,5 +1,5 @@
 var fs = require("fs");
-var schools = require('./sample.json');
+var schools = require('./linked_in_list_4.json');
 var webPage = require('webpage');
 var page = webPage.create();
 var similarSchoolBlock;
@@ -7,25 +7,31 @@ var temporaryArray = [];
 var outputArray = [];
 var i = 0;
 var schoolArray = JSON.parse(JSON.stringify(schools));
-var path = 'school_html_block.json';
+var path = 'similar_schools_5.json';
 
-for(var prop in schoolArray){
-  var school = JSON.parse(JSON.stringify(schoolArray[prop]));
-  console.log(school.url);
-  console.log(school.name);
-  temporaryArray.push([school.name, school.url])
-};
+
+  for(var prop in schoolArray){
+    var school = JSON.parse(JSON.stringify(schoolArray[prop]));
+    console.log(school.url);
+    console.log(school.name);
+    temporaryArray.push([school.name, school.url])
+  };
+
 
 
 function logPage(schoolName, schoolUrl) {
-  similarSchoolBlock = '';
   page.open(schoolUrl, function(status){
     console.log(status);
     console.log(schoolName);
     if (status == 'success') {
-      similarSchoolBlock = page.evaluate(function(){
-        return document.querySelector('.similar-schoos').innerHTML;
-      });
+      try {
+        similarSchoolBlock = page.evaluate(function (){
+          return document.querySelector('.similar-schools').innerHTML;
+        });
+      }
+      catch (err) {
+        similarSchoolBlock = null;
+      };
     };
 
     var tempJson = {
@@ -37,7 +43,7 @@ function logPage(schoolName, schoolUrl) {
     setTimeout(function(){
       i++;
       if (i < temporaryArray.length) {
-        if (i % 20 === 0) {
+        if (i % 50 === 0) {
           fs.write( path, JSON.stringify(outputArray, undefined, 2), function (err) {
             if (err) throw err;
             console.log('It\'s saved!');
@@ -51,15 +57,17 @@ function logPage(schoolName, schoolUrl) {
       });
         phantom.exit();
       }
-    }, 10000)
+    }, 6000)
 
   }); 
 };
 
+
 function nextPage(i) {
-  var schoolName = temporaryArray[i][0];
-  var schoolUrl = temporaryArray[i][1];
-  logPage(schoolName, schoolUrl);
+    var schoolName = temporaryArray[i][0];
+    var schoolUrl = temporaryArray[i][1];
+    logPage(schoolName, schoolUrl);
 };
+
 
 nextPage(i);
