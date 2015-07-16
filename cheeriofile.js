@@ -1,7 +1,7 @@
 var cheerio = require("cheerio");
 var fs = require("fs");
 var tempArray = [];
-var masterArray = [];
+var masterHash = {};
 var schoolArray = [];
 var schoolHtmlList = require('./total_html_list.json');
 var schoolObject;
@@ -29,13 +29,12 @@ for (var i = 0; i < schoolHtmlList.length; i++) {
 		});
 		var schoolName = schoolHtmlList[i].name ;
 		console.log(schoolName + " is parent");
-		var schoolMaster = { schoolName : tempArray }
-		masterArray.push(schoolMaster);
+		masterHash[schoolName] = tempArray;
 		tempArray = [];
 	}
 	
 	if ( i === schoolHtmlList.length - 1 ) {
-		fs.writeFile( path, JSON.stringify(masterArray, undefined, 2), function (err) {
+		fs.writeFile( path, JSON.stringify(masterHash, undefined, 2), function (err) {
 		  if (err) throw err;
 		  console.log('It\'s saved!');
 		});
