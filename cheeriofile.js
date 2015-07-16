@@ -1,6 +1,7 @@
 var cheerio = require("cheerio");
 var fs = require("fs");
 var tempArray = [];
+var masterArray = [];
 var schoolArray = [];
 var schoolHtmlList = require('./total_html_list.json');
 var schoolObject;
@@ -24,13 +25,17 @@ for (var i = 0; i < schoolHtmlList.length; i++) {
 				name: schoolName,
 				location: schoolLocation
 			}
-			tempArray.push(school)
+			tempArray.push(school);
 		});
+		var schoolName = schoolHtmlList[i].name ;
+		console.log(schoolName + " is parent");
+		var schoolMaster = { schoolName : tempArray }
+		masterArray.push(schoolMaster);
+		tempArray = [];
 	}
 	
 	if ( i === schoolHtmlList.length - 1 ) {
-		schoolObject = { "similarSchool" : tempArray }
-		fs.writeFile( path, JSON.stringify(schoolObject, undefined, 2), function (err) {
+		fs.writeFile( path, JSON.stringify(masterArray, undefined, 2), function (err) {
 		  if (err) throw err;
 		  console.log('It\'s saved!');
 		});
